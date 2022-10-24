@@ -1,7 +1,18 @@
-import { Action, ActionPanel, confirmAlert, getApplications, List, LocalStorage, showToast, Toast } from "@raycast/api";
+import {
+  Action,
+  ActionPanel,
+  confirmAlert,
+  getApplications,
+  Icon,
+  List,
+  LocalStorage,
+  showToast,
+  Toast,
+} from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { Scene } from "./types/scene";
 import { exec } from "child_process";
+import CreateScene from "./create-scene";
 
 const openApplication = async (applicationPath: string) => {
   return exec(`open ${applicationPath}`);
@@ -58,6 +69,13 @@ export default function Command() {
             <ActionPanel>
               <ActionPanel.Section>
                 <Action title="Run scene" onAction={() => runScene(scene)} />
+
+                <Action.Push
+                  icon={Icon.Pencil}
+                  title="Create scene"
+                  shortcut={{ modifiers: ["cmd"], key: "n" }}
+                  target={<CreateScene />}
+                />
 
                 <Action
                   title="Delete scene"

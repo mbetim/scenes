@@ -12,7 +12,7 @@ import {
 import { FormValidation, useForm, usePromise } from "@raycast/utils";
 import { Scene } from "./types/scene";
 
-export default function Command() {
+export default function CreateScene() {
   const { data: computerApplications } = usePromise(getApplications, []);
 
   const { handleSubmit, itemProps } = useForm({
