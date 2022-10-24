@@ -1,0 +1,47 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "scenes",
+  "title": "Scenes",
+  "description": "",
+  "icon": "command-icon.png",
+  "author": "mbetim",
+  "categories": [
+    "Productivity"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "create-scene",
+      "title": "Create scene",
+      "description": "Create a new scene",
+      "mode": "view"
+    },
+    {
+      "name": "list-scenes",
+      "title": "List scenes",
+      "description": "List all scenes saved",
+      "mode": "view"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.41.1",
+    "@raycast/utils": "^1.4.9"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.4",
+    "@types/react": "18.0.9",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "prettier": "^2.5.1",
+    "typescript": "^4.4.3"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "publish": "ray publish"
+  }
+}
