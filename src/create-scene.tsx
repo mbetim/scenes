@@ -10,10 +10,13 @@ import {
   Toast,
 } from "@raycast/api";
 import { FormValidation, useForm, usePromise } from "@raycast/utils";
+import { useMemo } from "react";
 import { Scene } from "./types/scene";
+import { getCodeProjects } from "./utils/getCodeProjects";
 
 export default function CreateScene() {
   const { data: computerApplications } = usePromise(getApplications, []);
+  const codeProjects = useMemo(() => getCodeProjects(), []);
 
   const { handleSubmit, itemProps } = useForm({
     onSubmit: async (values: Scene) => {
@@ -31,10 +34,7 @@ export default function CreateScene() {
       showHUD("✅ Scene created successfully");
       popToRoot({ clearSearchBar: true });
     },
-    validation: {
-      name: FormValidation.Required,
-      applications: (value) => (!value || value.length === 0 ? "Please select at least one application" : undefined),
-    },
+    validation: { name: FormValidation.Required },
   });
 
   return (
@@ -53,9 +53,15 @@ export default function CreateScene() {
 
       <Form.Separator />
 
-      <Form.TagPicker title="Applications (you can select multiple options)" {...itemProps.applications}>
+      <Form.TagPicker title="Applications" {...itemProps.applications}>
         {computerApplications?.map((application) => (
           <Form.TagPicker.Item key={application.name} value={application.name} title={application.name} />
+        ))}
+      </Form.TagPicker>
+
+      <Form.TagPicker title="Code Projects" {...itemProps.codeProjects}>
+        {codeProjects?.map((project) => (
+          <Form.TagPicker.Item key={project.name} value={project.name} title={project.name} />
         ))}
       </Form.TagPicker>
     </Form>
