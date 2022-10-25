@@ -45,11 +45,16 @@ export default function Command() {
     isLoading,
     revalidate,
   } = usePromise(async () => {
-    const scenes = await LocalStorage.allItems();
+    const savedScenes = await LocalStorage.allItems();
+    const filteredScenes: Scene[] = [];
 
-    return Object.entries(scenes)
-      .filter(([key]) => key.startsWith("scene-"))
-      .map(([_, value]) => JSON.parse(value) as Scene);
+    for (const [key, value] of Object.entries(savedScenes)) {
+      if (!key.startsWith("scene-")) continue;
+
+      filteredScenes.push(JSON.parse(value));
+    }
+
+    return filteredScenes.sort((a, b) => a.name.localeCompare(b.name));
   }, []);
 
   const runScene = async (scene: Scene) => {
