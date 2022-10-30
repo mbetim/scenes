@@ -11,12 +11,14 @@ import {
 } from "@raycast/api";
 import { FormValidation, useForm, usePromise } from "@raycast/utils";
 import { useMemo } from "react";
+import { useLinks } from "./hooks/useLinks";
 import { Scene } from "./types/scene";
 import { getCodeProjects } from "./utils/getCodeProjects";
 
 export default function CreateScene() {
   const { data: computerApplications } = usePromise(getApplications, []);
   const codeProjects = useMemo(() => getCodeProjects(), []);
+  const { data: links } = useLinks();
 
   const { handleSubmit, itemProps } = useForm({
     onSubmit: async (values: Scene) => {
@@ -62,6 +64,18 @@ export default function CreateScene() {
       <Form.TagPicker title="Code Projects" {...itemProps.codeProjects}>
         {codeProjects?.map((project) => (
           <Form.TagPicker.Item key={project.name} value={project.name} title={project.name} />
+        ))}
+      </Form.TagPicker>
+
+      <Form.TagPicker title="Open in Terminal" {...itemProps.openInTerminal}>
+        {links?.map((link) => (
+          <Form.TagPicker.Item key={link.name} value={link.name} title={link.name} />
+        ))}
+      </Form.TagPicker>
+
+      <Form.TagPicker title="Open in Browser" {...itemProps.openInBrowser}>
+        {links?.map((link) => (
+          <Form.TagPicker.Item key={link.name} value={link.name} title={link.name} />
         ))}
       </Form.TagPicker>
     </Form>

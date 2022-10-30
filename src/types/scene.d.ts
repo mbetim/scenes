@@ -1,3 +1,8 @@
+export interface Link {
+  name: string;
+  path: string;
+}
+
 export interface CodeProject {
   name: string;
   rootPath: string;
@@ -10,4 +15,6 @@ export interface Scene {
   description: string;
   applications: string[];
   codeProjects?: string[];
+  openInBrowser?: string[];
+  openInTerminal?: string[];
 }
