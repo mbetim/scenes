@@ -12,6 +12,7 @@ import {
 } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { exec } from "child_process";
+import React, { Fragment, useMemo } from "react";
 import tildify from "tildify";
 import CreateScene from "./create-scene";
 import { useLinks } from "./hooks/useLinks";
@@ -23,21 +24,6 @@ const openApplication = async (applicationPath: string) => exec(`open ${applicat
 const openCodeProject = async (codeProjectPath: string) => {
   const path = tildify(codeProjectPath);
   return await open(path, "Visual Studio Code");
-};
-
-const makeAccessoryText = (scene: Scene) => {
-  const { applications, codeProjects } = scene;
-  const accessoryText = [];
-
-  if (applications.length > 0) {
-    accessoryText.push(`${applications.length} app${applications.length > 1 ? "s" : ""}`);
-  }
-
-  if (codeProjects && codeProjects.length > 0) {
-    accessoryText.push(`${codeProjects.length} project${codeProjects.length > 1 ? "s" : ""}`);
-  }
-
-  return accessoryText.join(" and ");
 };
 
 export default function Command() {
@@ -57,6 +43,32 @@ export default function Command() {
 
     return filteredScenes.sort((a, b) => a.name.localeCompare(b.name));
   }, []);
+
+  const parsedScenes = useMemo(() => {
+    if (!scenes) return [];
+
+    return scenes.map((scene) => {
+      const details: { title: string; tags: string[] }[] = [];
+
+      if (scene.applications.length > 0) {
+        details.push({ title: "Applications", tags: scene.applications });
+      }
+
+      if (scene.codeProjects && scene.codeProjects.length > 0) {
+        details.push({ title: "Code Projects", tags: scene.codeProjects });
+      }
+
+      if (scene.openInTerminal && scene.openInTerminal.length > 0) {
+        details.push({ title: "Open in Terminal", tags: scene.openInTerminal });
+      }
+
+      if (scene.openInBrowser && scene.openInBrowser.length > 0) {
+        details.push({ title: "Open in Browser", tags: scene.openInBrowser });
+      }
+
+      return { ...scene, details };
+    });
+  }, [scenes]);
 
   const { data: links } = useLinks();
 
@@ -97,13 +109,31 @@ export default function Command() {
   };
 
   return (
-    <List isLoading={isLoading}>
-      {scenes?.map((scene) => (
+    <List isShowingDetail isLoading={isLoading}>
+      {parsedScenes.map((scene) => (
         <List.Item
           key={scene.name}
           title={scene.name}
           subtitle={scene.description}
-          accessories={[{ text: makeAccessoryText(scene) }]}
+          detail={
+            <List.Item.Detail
+              metadata={
+                <List.Item.Detail.Metadata>
+                  {scene.details.map((detail, index) => (
+                    <Fragment key={detail.title}>
+                      <List.Item.Detail.Metadata.TagList title={detail.title}>
+                        {detail.tags.map((tag) => (
+                          <List.Item.Detail.Metadata.TagList.Item key={tag} text={tag} />
+                        ))}
+                      </List.Item.Detail.Metadata.TagList>
+
+                      {index < scene.details.length - 1 ? <List.Item.Detail.Metadata.Separator /> : null}
+                    </Fragment>
+                  ))}
+                </List.Item.Detail.Metadata>
+              }
+            />
+          }
           actions={
             <ActionPanel>
               <ActionPanel.Section>
