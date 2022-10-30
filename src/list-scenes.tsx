@@ -14,6 +14,7 @@ import { usePromise } from "@raycast/utils";
 import { exec } from "child_process";
 import tildify from "tildify";
 import CreateScene from "./create-scene";
+import { useLinks } from "./hooks/useLinks";
 import { Scene } from "./types/scene";
 import { getCodeProjects } from "./utils/getCodeProjects";
 
@@ -57,6 +58,8 @@ export default function Command() {
     return filteredScenes.sort((a, b) => a.name.localeCompare(b.name));
   }, []);
 
+  const { data: links } = useLinks();
+
   const runScene = async (scene: Scene) => {
     const toast = await showToast(Toast.Style.Animated, "Running Scene...");
 
@@ -67,10 +70,14 @@ export default function Command() {
       scene.applications.includes(application.name)
     );
     const filteredCodeProjects = codeProjects.filter((codeProject) => scene.codeProjects?.includes(codeProject.name));
+    const filteredOpenInBrowser = links?.filter((link) => scene.openInBrowser?.includes(link.name)) ?? [];
+    const filteredOpenInTerminal = links?.filter((link) => scene.openInTerminal?.includes(link.name)) ?? [];
 
     await Promise.all([
       ...filteredApplications.map((application) => openApplication(application.path)),
       ...filteredCodeProjects.map((codeProject) => openCodeProject(codeProject.rootPath)),
+      ...filteredOpenInBrowser.map(({ path }) => open(path)),
+      ...filteredOpenInTerminal.map(({ path }) => open(path, "iTerm")),
     ]);
     toast.title = "Scene ran successfully";
     toast.style = Toast.Style.Success;
