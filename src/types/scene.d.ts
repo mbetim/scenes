@@ -1,3 +1,8 @@
+export interface Link {
+  name: string;
+  path: string;
+}
+
 export interface CodeProject {
   name: string;
   rootPath: string;
