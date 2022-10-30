@@ -15,4 +15,6 @@ export interface Scene {
   description: string;
   applications: string[];
   codeProjects?: string[];
+  openInBrowser?: string[];
+  openInTerminal?: string[];
 }
