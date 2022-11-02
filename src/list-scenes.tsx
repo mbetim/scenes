@@ -12,18 +12,23 @@ import {
 } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { exec } from "child_process";
-import React, { Fragment, useMemo } from "react";
-import tildify from "tildify";
+import { Fragment, useMemo } from "react";
 import CreateScene from "./create-scene";
 import { useLinks } from "./hooks/useLinks";
-import { Scene } from "./types/scene";
+import { CodeProject, Scene } from "./types/scene";
 import { getCodeProjects } from "./utils/getCodeProjects";
 
 const openApplication = async (applicationPath: string) => exec(`open ${applicationPath}`);
 
-const openCodeProject = async (codeProjectPath: string) => {
-  const path = tildify(codeProjectPath);
-  return await open(path, "Visual Studio Code");
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const openCodeProjects = async (codeProjects: CodeProject[]) => {
+  for (const codeProject of codeProjects) {
+    await open(codeProject.rootPath, "com.microsoft.VSCode");
+
+    // Wait for VSCode to open (otherwise it will open all projects in a single window)
+    await wait(250);
+  }
 };
 
 export default function Command() {
@@ -86,10 +91,10 @@ export default function Command() {
     const filteredOpenInTerminal = links?.filter((link) => scene.openInTerminal?.includes(link.name)) ?? [];
 
     await Promise.all([
-      ...filteredApplications.map((application) => openApplication(application.path)),
-      ...filteredCodeProjects.map((codeProject) => openCodeProject(codeProject.rootPath)),
-      ...filteredOpenInBrowser.map(({ path }) => open(path)),
-      ...filteredOpenInTerminal.map(({ path }) => open(path, "iTerm")),
+      filteredApplications.map((application) => openApplication(application.path)),
+      openCodeProjects(filteredCodeProjects),
+      filteredOpenInBrowser.map(({ path }) => open(path)),
+      filteredOpenInTerminal.map(({ path }) => open(path, "iTerm")),
     ]);
     toast.title = "Scene ran successfully";
     toast.style = Toast.Style.Success;
