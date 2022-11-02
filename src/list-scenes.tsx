@@ -18,7 +18,10 @@ import { useLinks } from "./hooks/useLinks";
 import { CodeProject, Scene } from "./types/scene";
 import { getCodeProjects } from "./utils/getCodeProjects";
 
-const openApplication = async (applicationPath: string) => exec(`open ${applicationPath}`);
+const openApplication = async (applicationPath: string) => {
+  const formattedPath = applicationPath.replace(/\s/g, "\\ ");
+  exec(`open ${formattedPath}`);
+};
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
