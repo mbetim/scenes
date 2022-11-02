@@ -6,7 +6,7 @@ interface FormData {
   path: string;
 }
 
-export default function Command() {
+export default function CreateLink() {
   const { handleSubmit, itemProps } = useForm<FormData>({
     onSubmit: async (values) => {
       const toast = await showToast(Toast.Style.Animated, "Creating link...");
