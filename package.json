@@ -27,6 +27,12 @@
       "title": "Create scene link",
       "description": "Create a new scene link",
       "mode": "view"
+    },
+    {
+      "name": "list-links",
+      "title": "List links",
+      "description": "List all links saved",
+      "mode": "view"
     }
   ],
   "dependencies": {
